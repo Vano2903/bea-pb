@@ -7,7 +7,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN go build -o pb .
+# RUN go build -o pb .
+# RUN go clean
+RUN CGO_ENABLED=0 GOOS=linux go build -o pb -installsuffix cgo -ldflags '-w' .
 
 FROM scratch
 WORKDIR /app
