@@ -12,4 +12,4 @@ RUN go build -o pb .
 FROM scratch
 WORKDIR /app
 COPY --from=builder /app/pb ./pb
-ENTRYPOINT ["./pb serve"]
+ENTRYPOINT ["/app/pb", "serve", "--http=0.0.0.0:8090", "--dev"]
