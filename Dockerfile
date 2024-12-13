@@ -11,7 +11,7 @@ COPY . .
 # RUN go clean
 RUN CGO_ENABLED=0 GOOS=linux go build -o pb -installsuffix cgo -ldflags '-w' .
 
-FROM scratch
+FROM alpine
 WORKDIR /app
 COPY --from=builder /app/pb ./pb
 ENTRYPOINT ["/app/pb", "serve", "--http=0.0.0.0:8090", "--dev"]
