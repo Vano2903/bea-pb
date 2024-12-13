@@ -1,0 +1,29 @@
+services:
+  pocketbase:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dev-pb-dash.entrypoints=https"
+      - "traefik.http.routers.dev-pb-dash.rule=Host(`dash.pb.test.bea.branila.it`)"
+      - "traefik.http.routers.dev-pb-dash.tls=true"
+      - "traefik.http.routers.dev-pb-dash.tls.certresolver=cloudflare"
+      - "traefik.http.services.dev-pb-dash.loadbalancer.server.port=8080"
+    networks:
+      - traefik
+    volumes:
+      - ./data/pb_data:/pb_data
+      - ./data/pb_public:/pb_public # optional
+      - ./data/pb_hooks:/pb_hooks # optional
+#    healthcheck: # optional, recommended since v0.10.0
+#      test: wget --no-verbose --tries=1 --spider http://pocketbase:8090/api/health || exit 1
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+
+networks:
+  traefik:
+    external: true
+    name: traefik-servicenet
