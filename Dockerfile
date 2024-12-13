@@ -1,4 +1,4 @@
-FROM golang:1.23 as builder
+FROM golang:1.23 AS builder
 
 ARG CGO_ENABLED=0
 WORKDIR /app
@@ -7,8 +7,8 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN go build
+RUN go build -o pb .
 
 FROM scratch
-COPY --from=builder /app/server /server
-ENTRYPOINT ["/server serve"]
+COPY --from=builder /app/pb /pb
+ENTRYPOINT ["/pb serve"]
