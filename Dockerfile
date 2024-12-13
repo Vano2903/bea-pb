@@ -10,5 +10,6 @@ COPY . .
 RUN go build -o pb .
 
 FROM scratch
-COPY --from=builder /app/pb /pb
-ENTRYPOINT ["/pb serve"]
+WORKDIR /app
+COPY --from=builder /app/pb ./pb
+ENTRYPOINT ["./pb serve"]
