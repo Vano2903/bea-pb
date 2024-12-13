@@ -30,8 +30,13 @@ func main() {
 		// fmt.Println("new users oauth request")
 
 		// e.App.Logger().Debug("new users oauth request")
-		e.App.Logger().Debug("new users oauth request", e)
+		e.App.Logger().Debug("new users oauth request")
 		// e.Collection
+		e.App.Logger().Debug("provider name", e.ProviderName)
+		e.App.Logger().Debug("record", e.Record)
+		e.App.Logger().Debug("oauth2 user", e.OAuth2User)
+		e.App.Logger().Debug("create data", e.CreateData)
+		e.App.Logger().Debug("is new record", e.IsNewRecord)
 		// e.ProviderName
 		// e.ProviderClient
 		// e.Record (could be nil)
