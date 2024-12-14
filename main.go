@@ -33,7 +33,7 @@ func main() {
 			e.App.Logger().Error("provider not found", "name", e.ProviderName)
 			return err
 		}
-		e.App.Logger().Debug("provider p", p)
+		e.App.Logger().Debug("provider p", p.AuthURL())
 
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
 
