@@ -64,10 +64,6 @@ func main() {
 		}
 
 		user, err := app.FindAuthRecordByEmail(collection, email)
-		if user.Verified() {
-			// e.App.Logger().Debug("user already verified", user)
-			return e.Next()
-		}
 
 		e.IsNewRecord = false
 		if err != nil {
@@ -90,6 +86,10 @@ func main() {
 				}
 			}
 		} else {
+			if user.Verified() {
+				// e.App.Logger().Debug("user already verified", user)
+				return e.Next()
+			}
 			// e.App.Logger().Debug("user found", user)
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
