@@ -81,14 +81,18 @@ func wrapProvider() auth.ProviderFactoryFunc {
 	}
 }
 
+func init() {
+	auth.Providers[NamePaleoid] = wrapProvider()
+}
+
 func main() {
 	app := pocketbase.New()
 
 	// create a new OAuth2 provider
-	paleoid := NewPaleoidProvider()
-	app.Logger().Debug("provider", "name", paleoid.DisplayName())
+	// paleoid := NewPaleoidProvider()
+	// app.Logger().Debug("provider", "name", paleoid.DisplayName())
 
-	auth.Providers[NamePaleoid] = wrapProvider()
+	// auth.Providers[NamePaleoid] = wrapProvider()
 
 	// register the provider
 	// users, err := app.FindCollectionByNameOrId("users")
