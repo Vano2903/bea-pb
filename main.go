@@ -54,6 +54,8 @@ func main() {
 			}
 		} else {
 			e.App.Logger().Debug("user found", user)
+			user.Set("verified", true)
+			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 		}
 		return e.Next()
 	})
