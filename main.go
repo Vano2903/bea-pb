@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -83,11 +84,12 @@ func wrapProvider() auth.ProviderFactoryFunc {
 
 func init() {
 	auth.Providers[NamePaleoid] = wrapProvider()
+	fmt.Println("PaleoID provider registered")
+	fmt.Println(auth.Providers)
 }
 
 func main() {
 	app := pocketbase.New()
-
 	// create a new OAuth2 provider
 	// paleoid := NewPaleoidProvider()
 	// app.Logger().Debug("provider", "name", paleoid.DisplayName())
