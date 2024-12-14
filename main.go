@@ -97,10 +97,13 @@ func main() {
 	// auth.Providers[NamePaleoid] = wrapProvider()
 
 	// register the provider
-	// users, err := app.FindCollectionByNameOrId("users")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	users, err := app.FindCollectionByNameOrId("users")
+	if err != nil {
+		log.Fatal(err)
+	}
+	users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
+		Name: NamePaleoid,
+	})
 	// users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
 	// 	Name: NamePaleoid,
 	// })
