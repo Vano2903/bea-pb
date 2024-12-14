@@ -249,7 +249,7 @@ func main() {
 				user.Set("name", e.OAuth2User.RawUser["nome"])
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
 
-				// e.OAuth2User.Id = matricola
+				e.OAuth2User.Id = matricola
 				// e.OAuth2User.Email = email
 				// e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
 				// e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
@@ -264,14 +264,14 @@ func main() {
 		} else {
 			if user.Verified() {
 				e.Record = user
-				// e.OAuth2User.Id = matricola
+				e.OAuth2User.Id = matricola
 				// e.OAuth2User.Email = email
 				// e.OAuth2User.Name = user.Get("name").(string)
 				// e.OAuth2User.Username = user.Get("surname").(string)
 				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 				return e.Next()
 			}
-			// e.OAuth2User.Id = matricola
+			e.OAuth2User.Id = matricola
 			// e.OAuth2User.Email = email
 			// e.OAuth2User.Name = user.Get("name").(string)
 			// e.OAuth2User.Username = user.Get("surname").(string)
