@@ -241,18 +241,19 @@ func main() {
 				// }
 
 				// user.Id = id
-				e.OAuth2User.Id = matricola
 				// user.SetId(id)
 				user.SetEmail(email)
-				e.OAuth2User.Email = email
 				user.SetVerified(true)
 				user.SetPassword(security.RandomString(16))
 				user.Set("studentid", matricola)
 				user.Set("name", e.OAuth2User.RawUser["nome"])
-				e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
-				e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
-				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+
+				// e.OAuth2User.Id = matricola
+				// e.OAuth2User.Email = email
+				// e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
+				// e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
+				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 
 				user.Set("class", info["classe"])
 				user.Set("roles", "studente")
@@ -270,11 +271,11 @@ func main() {
 				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 				return e.Next()
 			}
-			e.OAuth2User.Id = matricola
-			e.OAuth2User.Email = email
-			e.OAuth2User.Name = user.Get("name").(string)
-			e.OAuth2User.Username = user.Get("surname").(string)
-			e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+			// e.OAuth2User.Id = matricola
+			// e.OAuth2User.Email = email
+			// e.OAuth2User.Name = user.Get("name").(string)
+			// e.OAuth2User.Username = user.Get("surname").(string)
+			// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
