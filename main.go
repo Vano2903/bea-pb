@@ -78,6 +78,8 @@ func main() {
 				user.Set("class", info["classe"])
 
 				user.Set("roles", "studente")
+
+				app.Save(user)
 			}
 		} else {
 			e.App.Logger().Debug("user found", user)
