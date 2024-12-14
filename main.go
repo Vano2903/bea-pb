@@ -6,6 +6,7 @@ import (
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/security"
 )
 
 func main() {
@@ -72,6 +73,7 @@ func main() {
 				user = core.NewRecord(collection)
 				user.SetEmail(email)
 				user.SetVerified(true)
+				user.SetPassword(security.RandomString(16))
 				user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 				user.Set("name", e.OAuth2User.RawUser["nome"])
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
