@@ -6,6 +6,7 @@ import (
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/tidwall/gjson"
 )
 
 func main() {
@@ -53,15 +54,19 @@ func main() {
 		}
 		email := emailAny.(string)
 
-		e.App.Logger().Debug("info utente", e.OAuth2User.RawUser["info_studente"])
+		info := e.OAuth2User.RawUser["info_studente"].(string)
+		classe := gjson.Get(info, "classe")
+		e.App.Logger().Debug("info utente", info)
+		e.App.Logger().Debug("info utente classe", classe.String())
 
-		collection, err := app.FindCollectionByNameOrId("articles")
+		collection, err := app.FindCollectionByNameOrId("users")
 		if err != nil {
 			return err
 		}
 
 		user, err := app.FindAuthRecordByEmail(collection, email)
 
+		e.IsNewRecord = false
 		if err != nil {
 			if err == sql.ErrNoRows {
 				e.App.Logger().Warn("user not found")
@@ -71,6 +76,7 @@ func main() {
 				user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 				user.Set("name", e.OAuth2User.RawUser["nome"])
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
+				user.Set("class", classe.String())
 
 				user.Set("roles", "studente")
 			}
