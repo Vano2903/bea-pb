@@ -63,6 +63,8 @@ func main() {
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 			e.App.Logger().Debug("user updated", user)
+
+			app.Save(user)
 		}
 		return e.Next()
 	})
