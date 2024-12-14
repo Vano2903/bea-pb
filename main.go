@@ -281,6 +281,12 @@ func main() {
 
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
+
+			if err := app.Save(user); err != nil {
+				return err
+			}
+
+			return apis.RecordAuthResponse(e.RequestEvent, user, core.MFAMethodOAuth2, e.OAuth2User)
 		}
 
 		if err := app.Save(user); err != nil {
