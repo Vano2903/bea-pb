@@ -226,57 +226,56 @@ func main() {
 		matricola := strconv.Itoa(int(e.OAuth2User.RawUser["matricola"].(float64)))
 		// e.IsNewRecord = false
 		if err != nil {
-			if err == sql.ErrNoRows {
-				e.App.Logger().Warn("user not found")
-				user = core.NewRecord(collection)
-
-				// id := security.RandomString(3)
-				// for {
-				// 	if _, err := app.FindRecordById(collection, id); err != nil {
-				// 		if err == sql.ErrNoRows {
-				// 			break
-				// 		}
-				// 	}
-				// 	id = security.RandomString(3)
-				// }
-
-				// user.Id = id
-				// user.SetId(id)
-				user.SetEmail(email)
-				user.SetVerified(true)
-				user.SetPassword(security.RandomString(16))
-				user.Set("studentid", matricola)
-				user.Set("name", e.OAuth2User.RawUser["nome"])
-				user.Set("surname", e.OAuth2User.RawUser["cognome"])
-
-				e.OAuth2User.Id = matricola
-				// e.OAuth2User.Email = email
-				// e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
-				// e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
-				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
-
-				user.Set("class", info["classe"])
-				user.Set("roles", "studente")
-				e.Record = user
-
-			} else {
+			if err != sql.ErrNoRows {
 				return err
 			}
+
+			e.App.Logger().Warn("user not found")
+			user = core.NewRecord(collection)
+
+			// id := security.RandomString(3)
+			// for {
+			// 	if _, err := app.FindRecordById(collection, id); err != nil {
+			// 		if err == sql.ErrNoRows {
+			// 			break
+			// 		}
+			// 	}
+			// 	id = security.RandomString(3)
+			// }
+
+			// user.Id = id
+			// user.SetId(id)
+			user.SetEmail(email)
+			user.SetVerified(true)
+			user.SetPassword(security.RandomString(16))
+			user.Set("studentid", matricola)
+			user.Set("name", e.OAuth2User.RawUser["nome"])
+			user.Set("surname", e.OAuth2User.RawUser["cognome"])
+
+			e.OAuth2User.Id = matricola
+			e.OAuth2User.Email = email
+			e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
+			e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
+			e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+
+			user.Set("class", info["classe"])
+			user.Set("roles", "studente")
+			e.Record = user
 		} else {
 			if user.Verified() {
 				// e.Record = user
 				e.OAuth2User.Id = matricola
-				// e.OAuth2User.Email = email
-				// e.OAuth2User.Name = user.Get("name").(string)
-				// e.OAuth2User.Username = user.Get("surname").(string)
-				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+				e.OAuth2User.Email = email
+				e.OAuth2User.Name = user.Get("name").(string)
+				e.OAuth2User.Username = user.Get("surname").(string)
+				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 				return e.Next()
 			}
 			e.OAuth2User.Id = matricola
-			// e.OAuth2User.Email = email
-			// e.OAuth2User.Name = user.Get("name").(string)
-			// e.OAuth2User.Username = user.Get("surname").(string)
-			// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+			e.OAuth2User.Email = email
+			e.OAuth2User.Name = user.Get("name").(string)
+			e.OAuth2User.Username = user.Get("surname").(string)
+			e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
