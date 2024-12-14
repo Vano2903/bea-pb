@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -84,8 +83,6 @@ func wrapProvider() auth.ProviderFactoryFunc {
 
 func init() {
 	auth.Providers[NamePaleoid] = wrapProvider()
-	fmt.Println("PaleoID provider registered")
-	fmt.Println(auth.Providers)
 }
 
 func main() {
@@ -96,14 +93,24 @@ func main() {
 
 	// auth.Providers[NamePaleoid] = wrapProvider()
 
-	// register the provider
-	users, err := app.App.FindCollectionByNameOrId("users")
-	if err != nil {
-		log.Fatal(err)
-	}
-	users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
-		Name: NamePaleoid,
+	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
+
+		// register the provider
+		users, err := e.App.FindCollectionByNameOrId("users")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		users.OAuth2.Enabled = true
+		users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
+			Name: NamePaleoid,
+		})
+		return e.Next()
 	})
+
 	// users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
 	// 	Name: NamePaleoid,
 	// })
@@ -162,6 +169,7 @@ func main() {
 	// 	}
 	// 	// paleoid.SetDisplayName("PaleoID")
 
+	app.OnRecordAuthWithOAuth2Request("users").UnbindAll()
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		for _, provider := range e.Collection.OAuth2.Providers {
 			if e.ProviderName == provider.Name {
