@@ -21,7 +21,7 @@ func main() {
 				if err != nil {
 					return err
 				}
-				e.App.Logger().Debug("provider initialized", "name", e.ProviderName)
+				e.App.Logger().Debug("provider initialized", "name", e.ProviderName, "displayName", p.DisplayName())
 
 				e.ProviderClient = p
 				break
@@ -33,7 +33,14 @@ func main() {
 			e.App.Logger().Error("provider not found", "name", e.ProviderName)
 			return err
 		}
-		e.App.Logger().Debug("provider p", p.AuthURL())
+		e.App.Logger().Debug("provider p", p.DisplayName())
+
+		p2, err := auth.NewProviderByName("paleoid")
+		if err != nil {
+			e.App.Logger().Error("provider not found", "name", e.ProviderName)
+			return err
+		}
+		e.App.Logger().Debug("provider p2", p2.DisplayName())
 
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
 
