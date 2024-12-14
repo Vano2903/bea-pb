@@ -13,7 +13,7 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
-		// e.App.Logger().Debug("provider name", e.ProviderName)
+		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
 		// e.App.Logger().Debug("record", e.Record)
 		// e.App.Logger().Debug("oauth2 user", e.OAuth2User)
 		// e.App.Logger().Debug("create data", e.CreateData)
@@ -42,7 +42,7 @@ func main() {
 
 		user, err := app.FindAuthRecordByEmail(collection, email)
 
-		e.IsNewRecord = false
+		// e.IsNewRecord = false
 		if err != nil {
 			if err == sql.ErrNoRows {
 				e.App.Logger().Warn("user not found")
