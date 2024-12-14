@@ -263,12 +263,12 @@ func main() {
 			e.Record = user
 		} else {
 			if user.Verified() {
-				// e.Record = user
-				e.OAuth2User.Id = matricola
-				e.OAuth2User.Email = email
-				e.OAuth2User.Name = user.Get("name").(string)
-				e.OAuth2User.Username = user.Get("surname").(string)
-				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+				e.Record = user
+				// e.OAuth2User.Id = matricola
+				// e.OAuth2User.Email = email
+				// e.OAuth2User.Name = user.Get("name").(string)
+				// e.OAuth2User.Username = user.Get("surname").(string)
+				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 				return e.Next()
 			}
 			e.OAuth2User.Id = matricola
