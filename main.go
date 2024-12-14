@@ -239,7 +239,7 @@ func main() {
 				}
 
 				user.Id = id
-				e.OAuth2User.Id = id
+				e.OAuth2User.Id = e.OAuth2User.RawUser["matricola"].(string)
 				// user.SetId(id)
 				user.SetEmail(email)
 				e.OAuth2User.Email = email
@@ -263,7 +263,7 @@ func main() {
 				e.Record = user
 				return e.Next()
 			}
-			e.OAuth2User.Id = user.Id
+			e.OAuth2User.Id = e.OAuth2User.RawUser["matricola"].(string)
 			e.OAuth2User.Email = email
 			e.OAuth2User.Name = user.Get("name").(string)
 			e.OAuth2User.Username = user.Get("surname").(string)
