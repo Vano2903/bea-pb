@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/pocketbase/pocketbase"
@@ -45,6 +46,15 @@ func main() {
 		// e.IsNewRecord
 		// and all RequestEvent fields...
 
+		user, err := app.FindFirstRecordByData("users", "email", e.OAuth2User.RawUser["email"])
+
+		if err != nil {
+			if err == sql.ErrNoRows {
+				e.App.Logger().Warn("user not found")
+			}
+		} else {
+			e.App.Logger().Debug("user found", user)
+		}
 		return e.Next()
 	})
 
