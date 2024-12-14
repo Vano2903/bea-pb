@@ -13,7 +13,20 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
+		var err error
+		for _, provider := range e.Collection.OAuth2.Providers {
+			if e.ProviderName == provider.Name {
+				e.App.Logger().Debug("provider found", "name", e.ProviderName)
+				e.ProviderClient, err = provider.InitProvider()
+				if err != nil {
+					return err
+				}
+				break
+			}
+		}
+
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
+
 		// e.App.Logger().Debug("record", e.Record)
 		// e.App.Logger().Debug("oauth2 user", e.OAuth2User)
 		// e.App.Logger().Debug("create data", e.CreateData)
