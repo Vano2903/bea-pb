@@ -93,23 +93,23 @@ func main() {
 
 	// auth.Providers[NamePaleoid] = wrapProvider()
 
-	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
-		if err := e.Next(); err != nil {
-			return err
-		}
+	// app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
+	// 	if err := e.Next(); err != nil {
+	// 		return err
+	// 	}
 
-		// register the provider
-		users, err := e.App.FindCollectionByNameOrId("users")
-		if err != nil {
-			log.Fatal(err)
-		}
+	// 	// register the provider
+	// 	users, err := e.App.FindCollectionByNameOrId("users")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
 
-		users.OAuth2.Enabled = true
-		users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
-			Name: NamePaleoid,
-		})
-		return e.Next()
-	})
+	// 	users.OAuth2.Enabled = true
+	// 	users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
+	// 		Name: NamePaleoid,
+	// 	})
+	// 	return e.Next()
+	// })
 
 	// users.OAuth2.Providers = append(users.OAuth2.Providers, core.OAuth2ProviderConfig{
 	// 	Name: NamePaleoid,
