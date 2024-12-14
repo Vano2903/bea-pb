@@ -31,13 +31,13 @@ func main() {
 		// fmt.Println("new users oauth request")
 
 		// e.App.Logger().Debug("new users oauth request")
-		e.App.Logger().Debug("new users oauth request")
-		// e.Collection
-		e.App.Logger().Debug("provider name", e.ProviderName)
-		e.App.Logger().Debug("record", e.Record)
-		e.App.Logger().Debug("oauth2 user", e.OAuth2User)
-		e.App.Logger().Debug("create data", e.CreateData)
-		e.App.Logger().Debug("is new record", e.IsNewRecord)
+		// e.App.Logger().Debug("new users oauth request")
+		// // e.Collection
+		// e.App.Logger().Debug("provider name", e.ProviderName)
+		// e.App.Logger().Debug("record", e.Record)
+		// e.App.Logger().Debug("oauth2 user", e.OAuth2User)
+		// e.App.Logger().Debug("create data", e.CreateData)
+		// e.App.Logger().Debug("is new record", e.IsNewRecord)
 		// e.ProviderName
 		// e.ProviderClient
 		// e.Record (could be nil)
@@ -55,8 +55,8 @@ func main() {
 
 		info := e.OAuth2User.RawUser["info_studente"].(map[string]interface{})
 		// classe := gjson.Get(info, "classe")
-		e.App.Logger().Debug("info utente", info)
-		e.App.Logger().Debug("info utente classe", info["classe"])
+		// e.App.Logger().Debug("info utente", info)
+		// e.App.Logger().Debug("info utente classe", info["classe"])
 
 		collection, err := app.FindCollectionByNameOrId("users")
 		if err != nil {
@@ -78,14 +78,15 @@ func main() {
 				user.Set("class", info["classe"])
 
 				user.Set("roles", "studente")
-
+				
+				e.App.Logger().Debug("new user", user)
 				app.Save(user)
 			}
 		} else {
-			e.App.Logger().Debug("user found", user)
+			// e.App.Logger().Debug("user found", user)
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
-			e.App.Logger().Debug("user updated", user)
+			// e.App.Logger().Debug("user updated", user)
 
 			app.Save(user)
 		}
