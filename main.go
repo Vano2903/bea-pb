@@ -97,7 +97,7 @@ func main() {
 	// auth.Providers[NamePaleoid] = wrapProvider()
 
 	// register the provider
-	users, err := app.FindCollectionByNameOrId("users")
+	users, err := app.App.FindCollectionByNameOrId("users")
 	if err != nil {
 		log.Fatal(err)
 	}
