@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/auth"
 	"github.com/pocketbase/pocketbase/tools/security"
@@ -269,7 +270,8 @@ func main() {
 				// e.OAuth2User.Name = user.Get("name").(string)
 				// e.OAuth2User.Username = user.Get("surname").(string)
 				// e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
-				return e.Next()
+				// return e.Next()
+				return apis.RecordAuthResponse(e.RequestEvent, user, core.MFAMethodOAuth2, e.OAuth2User)
 			}
 			e.OAuth2User.Id = matricola + "-" + security.RandomString(10)
 			e.OAuth2User.Email = email
@@ -291,6 +293,7 @@ func main() {
 		// user.NewAuthToken()
 
 		return e.Next()
+		// return e.Next()
 	})
 
 	if err := app.Start(); err != nil {
