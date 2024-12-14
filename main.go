@@ -46,7 +46,13 @@ func main() {
 		// e.IsNewRecord
 		// and all RequestEvent fields...
 
-		user, err := app.FindFirstRecordByData("users", "email", e.OAuth2User.RawUser["email"])
+		emailAny, ok := e.OAuth2User.RawUser["email"]
+		if !ok {
+			e.App.Logger().Error("email not found")
+			return e.Next()
+		}
+		email := emailAny.(string)
+		user, err := app.FindAuthRecordByEmail("users", email)
 
 		if err != nil {
 			if err == sql.ErrNoRows {
@@ -54,8 +60,9 @@ func main() {
 			}
 		} else {
 			e.App.Logger().Debug("user found", user)
-			user.Set("verified", true)
+			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
+			e.App.Logger().Debug("user updated", user)
 		}
 		return e.Next()
 	})
