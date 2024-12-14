@@ -223,6 +223,7 @@ func main() {
 
 		user, err := app.FindAuthRecordByEmail(collection, email)
 
+		matricola := strconv.Itoa(int(e.OAuth2User.RawUser["matricola"].(float64)))
 		// e.IsNewRecord = false
 		if err != nil {
 			if err == sql.ErrNoRows {
@@ -240,13 +241,13 @@ func main() {
 				}
 
 				user.Id = id
-				e.OAuth2User.Id = e.OAuth2User.RawUser["matricola"].(string)
+				e.OAuth2User.Id = matricola
 				// user.SetId(id)
 				user.SetEmail(email)
 				e.OAuth2User.Email = email
 				user.SetVerified(true)
 				user.SetPassword(security.RandomString(16))
-				user.Set("studentid", e.OAuth2User.RawUser["matricola"])
+				user.Set("studentid", matricola)
 				user.Set("name", e.OAuth2User.RawUser["nome"])
 				e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
@@ -262,14 +263,14 @@ func main() {
 		} else {
 			if user.Verified() {
 				e.Record = user
-				e.OAuth2User.Id = strconv.Itoa(e.OAuth2User.RawUser["matricola"].(int))
+				e.OAuth2User.Id = matricola
 				e.OAuth2User.Email = email
 				e.OAuth2User.Name = user.Get("name").(string)
 				e.OAuth2User.Username = user.Get("surname").(string)
 				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 				return e.Next()
 			}
-			e.OAuth2User.Id = e.OAuth2User.RawUser["matricola"].(string)
+			e.OAuth2User.Id = matricola
 			e.OAuth2User.Email = email
 			e.OAuth2User.Name = user.Get("name").(string)
 			e.OAuth2User.Username = user.Get("surname").(string)
