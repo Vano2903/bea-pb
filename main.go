@@ -169,27 +169,28 @@ func main() {
 	// 	}
 	// 	// paleoid.SetDisplayName("PaleoID")
 
-	app.OnRecordAuthWithOAuth2Request("users").UnbindAll()
+	// app.OnRecordAuthWithOAuth2Request("users").UnbindAll()
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
-		for _, provider := range e.Collection.OAuth2.Providers {
-			if e.ProviderName == provider.Name {
-				e.App.Logger().Debug("provider found", "name", e.ProviderName)
-				p, err := provider.InitProvider()
-				if err != nil {
-					return err
-				}
-				e.App.Logger().Debug("provider initialized", "name", e.ProviderName, "displayName", p.DisplayName())
+		// for _, provider := range e.Collection.OAuth2.Providers {
+		// 	if e.ProviderName == provider.Name {
+		// 		e.App.Logger().Debug("provider found", "name", e.ProviderName)
+		// 		p, err := provider.InitProvider()
+		// 		if err != nil {
+		// 			return err
+		// 		}
+		// 		e.App.Logger().Debug("provider initialized", "name", e.ProviderName, "displayName", p.DisplayName())
 
-				e.ProviderClient = p
-				break
-			}
-		}
-		p, err := auth.NewProviderByName(e.ProviderName)
-		if err != nil {
-			e.App.Logger().Error("provider not found", "name", e.ProviderName)
-			return err
-		}
-		e.App.Logger().Debug("provider p", p.DisplayName())
+		// 		e.ProviderClient = p
+		// 		break
+		// 	}
+		// }
+		// e.ProviderClient = auth.Providers[NamePaleoid]()
+		// p, err := auth.NewProviderByName(e.ProviderName)
+		// if err != nil {
+		// 	e.App.Logger().Error("provider not found", "name", e.ProviderName)
+		// 	return err
+		// }
+		// e.App.Logger().Debug("provider p", p.DisplayName())
 
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
 
@@ -253,7 +254,9 @@ func main() {
 		}
 
 		e.Record = user
-		return e.Next()
+		user.MarkAsNotNew()
+		user.NewAuthToken()
+		return nil
 	})
 
 	if err := app.Start(); err != nil {
