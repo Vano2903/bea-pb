@@ -230,17 +230,17 @@ func main() {
 				e.App.Logger().Warn("user not found")
 				user = core.NewRecord(collection)
 
-				id := security.RandomString(3)
-				for {
-					if _, err := app.FindRecordById(collection, id); err != nil {
-						if err == sql.ErrNoRows {
-							break
-						}
-					}
-					id = security.RandomString(3)
-				}
+				// id := security.RandomString(3)
+				// for {
+				// 	if _, err := app.FindRecordById(collection, id); err != nil {
+				// 		if err == sql.ErrNoRows {
+				// 			break
+				// 		}
+				// 	}
+				// 	id = security.RandomString(3)
+				// }
 
-				user.Id = id
+				// user.Id = id
 				e.OAuth2User.Id = matricola
 				// user.SetId(id)
 				user.SetEmail(email)
