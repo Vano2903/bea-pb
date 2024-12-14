@@ -169,7 +169,6 @@ func main() {
 	// 	}
 	// 	// paleoid.SetDisplayName("PaleoID")
 
-	// app.OnRecordAuthWithOAuth2Request("users").UnbindAll()
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		// for _, provider := range e.Collection.OAuth2.Providers {
 		// 	if e.ProviderName == provider.Name {
@@ -193,6 +192,7 @@ func main() {
 		// e.App.Logger().Debug("provider p", p.DisplayName())
 
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
+		// externalAuth, _ := e.App.AuxDB()FindExternalAuthByRecordAndProvider(e.Record, "discord")
 
 		// e.App.Logger().Debug("record", e.Record)
 		// e.App.Logger().Debug("oauth2 user", e.OAuth2User)
@@ -227,12 +227,31 @@ func main() {
 			if err == sql.ErrNoRows {
 				e.App.Logger().Warn("user not found")
 				user = core.NewRecord(collection)
+
+				id := security.RandomString(3)
+				for {
+					if _, err := app.FindRecordById(collection, id); err != nil {
+						if err == sql.ErrNoRows {
+							break
+						}
+					}
+					id = security.RandomString(3)
+				}
+
+				user.Id = id
+				e.OAuth2User.Id = id
+				// user.SetId(id)
 				user.SetEmail(email)
+				e.OAuth2User.Email = email
 				user.SetVerified(true)
 				user.SetPassword(security.RandomString(16))
 				user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 				user.Set("name", e.OAuth2User.RawUser["nome"])
+				e.OAuth2User.Name = e.OAuth2User.RawUser["nome"].(string)
 				user.Set("surname", e.OAuth2User.RawUser["cognome"])
+				e.OAuth2User.Username = e.OAuth2User.RawUser["cognome"].(string)
+				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
+
 				user.Set("class", info["classe"])
 
 				user.Set("roles", "studente")
@@ -244,6 +263,11 @@ func main() {
 				e.Record = user
 				return e.Next()
 			}
+			e.OAuth2User.Id = user.Id
+			e.OAuth2User.Email = email
+			e.OAuth2User.Name = user.Get("name").(string)
+			e.OAuth2User.Username = user.Get("surname").(string)
+			e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
@@ -254,8 +278,10 @@ func main() {
 		}
 
 		e.Record = user
-		user.MarkAsNotNew()
+		// e.OAuth2User =
+		// 	user.MarkAsNotNew()
 		user.NewAuthToken()
+
 		return nil
 	})
 
