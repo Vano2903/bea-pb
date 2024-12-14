@@ -13,11 +13,6 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
-		// fmt.Println("new users oauth request")
-
-		// e.App.Logger().Debug("new users oauth request")
-		// e.App.Logger().Debug("new users oauth request")
-		// // e.Collection
 		// e.App.Logger().Debug("provider name", e.ProviderName)
 		// e.App.Logger().Debug("record", e.Record)
 		// e.App.Logger().Debug("oauth2 user", e.OAuth2User)
@@ -39,9 +34,6 @@ func main() {
 		email := emailAny.(string)
 
 		info := e.OAuth2User.RawUser["info_studente"].(map[string]interface{})
-		// classe := gjson.Get(info, "classe")
-		// e.App.Logger().Debug("info utente", info)
-		// e.App.Logger().Debug("info utente classe", info["classe"])
 
 		collection, err := app.FindCollectionByNameOrId("users")
 		if err != nil {
@@ -64,16 +56,17 @@ func main() {
 				user.Set("class", info["classe"])
 
 				user.Set("roles", "studente")
+			} else {
+				return err
 			}
 		} else {
 			if user.Verified() {
-				// e.App.Logger().Debug("user already verified", user)
+				e.Record = user
 				return e.Next()
 			}
-			// e.App.Logger().Debug("user found", user)
+
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
-			// e.App.Logger().Debug("user updated", user)
 		}
 
 		if err := app.Save(user); err != nil {
