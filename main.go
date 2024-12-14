@@ -260,7 +260,7 @@ func main() {
 
 			user.Set("class", info["classe"])
 			user.Set("roles", "studente")
-			e.Record = user
+			// e.Record = user
 		} else {
 			if user.Verified() {
 				e.Record = user
@@ -284,6 +284,7 @@ func main() {
 		if err := app.Save(user); err != nil {
 			return err
 		}
+		e.Record = user
 
 		// e.OAuth2User =
 		// 	user.MarkAsNotNew()
