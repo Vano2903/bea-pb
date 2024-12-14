@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
@@ -261,7 +262,7 @@ func main() {
 		} else {
 			if user.Verified() {
 				e.Record = user
-				e.OAuth2User.Id = e.OAuth2User.RawUser["matricola"].(string)
+				e.OAuth2User.Id = strconv.Itoa(e.OAuth2User.RawUser["matricola"].(int))
 				e.OAuth2User.Email = email
 				e.OAuth2User.Name = user.Get("name").(string)
 				e.OAuth2User.Username = user.Get("surname").(string)
