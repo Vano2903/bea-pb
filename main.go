@@ -52,11 +52,27 @@ func main() {
 			return e.Next()
 		}
 		email := emailAny.(string)
-		user, err := app.FindAuthRecordByEmail("users", email)
+
+		e.App.Logger().Debug("info utente", e.OAuth2User.RawUser["info_studente"])
+
+		collection, err := app.FindCollectionByNameOrId("articles")
+		if err != nil {
+			return err
+		}
+
+		user, err := app.FindAuthRecordByEmail(collection, email)
 
 		if err != nil {
 			if err == sql.ErrNoRows {
 				e.App.Logger().Warn("user not found")
+				user = core.NewRecord(collection)
+				user.SetEmail(email)
+				user.SetVerified(true)
+				user.Set("studentid", e.OAuth2User.RawUser["matricola"])
+				user.Set("name", e.OAuth2User.RawUser["nome"])
+				user.Set("surname", e.OAuth2User.RawUser["cognome"])
+
+				user.Set("roles", "studente")
 			}
 		} else {
 			e.App.Logger().Debug("user found", user)
