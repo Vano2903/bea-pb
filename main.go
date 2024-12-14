@@ -12,22 +12,6 @@ import (
 func main() {
 	app := pocketbase.New()
 
-	// fires for every auth collection
-	// app.OnRecordAuthWithOAuth2Request().BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
-	// 	// e.App
-	// 	// e.Collection
-	// 	// e.ProviderName
-	// 	// e.ProviderClient
-	// 	// e.Record (could be nil)
-	// 	// e.OAuth2User
-	// 	// e.CreateData
-	// 	// e.IsNewRecord
-	// 	// and all RequestEvent fields...
-
-	// 	return e.Next()
-	// })
-
-	// fires only for "users" and "managers" auth collections
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		// fmt.Println("new users oauth request")
 
@@ -80,12 +64,6 @@ func main() {
 				user.Set("class", info["classe"])
 
 				user.Set("roles", "studente")
-
-				e.App.Logger().Debug("new user", user)
-				err := app.Save(user)
-				if err != nil {
-					return err
-				}
 			}
 		} else {
 			if user.Verified() {
@@ -96,12 +74,13 @@ func main() {
 			user.SetVerified(true)
 			user.Set("studentid", e.OAuth2User.RawUser["matricola"])
 			// e.App.Logger().Debug("user updated", user)
-
-			err := app.Save(user)
-			if err != nil {
-				return err
-			}
 		}
+
+		if err := app.Save(user); err != nil {
+			return err
+		}
+
+		e.Record = user
 		return e.Next()
 	})
 
