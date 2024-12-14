@@ -257,13 +257,14 @@ func main() {
 
 				user.Set("class", info["classe"])
 				user.Set("roles", "studente")
+				e.Record = user
 
 			} else {
 				return err
 			}
 		} else {
 			if user.Verified() {
-				e.Record = user
+				// e.Record = user
 				e.OAuth2User.Id = matricola
 				// e.OAuth2User.Email = email
 				// e.OAuth2User.Name = user.Get("name").(string)
@@ -285,7 +286,6 @@ func main() {
 			return err
 		}
 
-		e.Record = user
 		// e.OAuth2User =
 		// 	user.MarkAsNotNew()
 		// user.NewAuthToken()
