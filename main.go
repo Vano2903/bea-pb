@@ -255,8 +255,8 @@ func main() {
 				e.OAuth2User.Expiry, _ = types.ParseDateTime(time.Now().Add(time.Hour))
 
 				user.Set("class", info["classe"])
-
 				user.Set("roles", "studente")
+
 			} else {
 				return err
 			}
@@ -287,9 +287,9 @@ func main() {
 		e.Record = user
 		// e.OAuth2User =
 		// 	user.MarkAsNotNew()
-		user.NewAuthToken()
+		// user.NewAuthToken()
 
-		return nil
+		return e.Next()
 	})
 
 	if err := app.Start(); err != nil {
