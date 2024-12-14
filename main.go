@@ -6,6 +6,7 @@ import (
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/auth"
 	"github.com/pocketbase/pocketbase/tools/security"
 )
 
@@ -13,17 +14,26 @@ func main() {
 	app := pocketbase.New()
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
-		var err error
 		for _, provider := range e.Collection.OAuth2.Providers {
 			if e.ProviderName == provider.Name {
 				e.App.Logger().Debug("provider found", "name", e.ProviderName)
-				e.ProviderClient, err = provider.InitProvider()
+				p, err := provider.InitProvider()
 				if err != nil {
 					return err
 				}
+				e.App.Logger().Debug("provider initialized", "name", e.ProviderName)
+
+				e.ProviderClient = p
 				break
 			}
 		}
+
+		p, err := auth.NewProviderByName(e.ProviderName)
+		if err != nil {
+			e.App.Logger().Error("provider not found", "name", e.ProviderName)
+			return err
+		}
+		e.App.Logger().Debug("provider p", p)
 
 		e.App.Logger().Debug("provider ", "name", e.ProviderName, "client", e.ProviderClient)
 
