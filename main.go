@@ -87,13 +87,10 @@ func paleoidOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth
 
 func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2RequestEvent) error {
 	l := app.Logger()
-	l.Info("googleOauthHandler")
-
-	l.Info("e.ProviderName: ", e.ProviderName)
-	l.Info("e.Record: ", e.Record)
-	l.Info("e.OAuth2User: ", e.OAuth2User)
-
-	// e.RequestEvent.Request
+	l.Info("googleOauthHandler",
+		"providerName", e.ProviderName,
+		"record", e.Record,
+		"OAuth2User", e.OAuth2User)
 
 	return e.Next()
 }
@@ -103,6 +100,16 @@ func main() {
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		// return paleoidOauthHandler(app, e)
 		return googleOauthHandler(app, e)
+	})
+
+	app.OnMailerSend().BindFunc(func(e *core.MailerEvent) error {
+		l := app.Logger()
+		l.Info("MailerSend",
+			"from", e.Message.From,
+			"to", e.Message.To,
+			"subject", e.Message.Subject,
+			"body", e.Message.Text)
+		return nil
 	})
 
 	if err := app.Start(); err != nil {

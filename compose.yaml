@@ -10,7 +10,7 @@ services:
       - "traefik.http.routers.dev-pb-dash.rule=Host(`dash.pb.test.bea.branila.it`)"
       - "traefik.http.routers.dev-pb-dash.tls=true"
       - "traefik.http.routers.dev-pb-dash.tls.certresolver=cloudflare"
-      - "traefik.http.services.dev-pb-dash.loadbalancer.server.port=8080"
+      - "traefik.http.services.dev-pb-dash.loadbalancer.server.port=8090"
     networks:
       - traefik
     volumes:
