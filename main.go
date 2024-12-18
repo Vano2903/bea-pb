@@ -102,15 +102,15 @@ func main() {
 		return googleOauthHandler(app, e)
 	})
 
-	app.OnMailerSend().BindFunc(func(e *core.MailerEvent) error {
-		l := app.Logger()
-		l.Info("MailerSend",
-			"from", e.Message.From,
-			"to", e.Message.To,
-			"subject", e.Message.Subject,
-			"body", e.Message.Text)
-		return nil
-	})
+	// app.OnMailerSend().BindFunc(func(e *core.MailerEvent) error {
+	// 	l := app.Logger()
+	// 	l.Info("MailerSend",
+	// 		"from", e.Message.From,
+	// 		"to", e.Message.To,
+	// 		"subject", e.Message.Subject,
+	// 		"body", e.Message.Text)
+	// 	return nil
+	// })
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
