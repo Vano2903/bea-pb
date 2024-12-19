@@ -88,6 +88,10 @@ func paleoidOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth
 
 func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2RequestEvent) error {
 	l := app.Logger()
+
+	// get collection
+	l.Info("providers in collection", e.Collection.Name, e.Collection.OAuth2.Providers)
+
 	l.Info("googleOauthHandler",
 		"providerName", e.ProviderName,
 		"record", e.Record,
