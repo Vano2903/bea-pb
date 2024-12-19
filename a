@@ -1,0 +1,9 @@
+^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it
+
+davide.vanoncini.studente@itispaleocapa.it
+davide.vanoncini.studente12@itispaleocapa.it
+
+
+^[a-zA-z]+\.[a-zA-z0-9]+@itispaleocapa\.it
+
+davide.vanoncini@itispaleocapa.it

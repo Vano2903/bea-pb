@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -98,6 +99,37 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		"OAuth2User", e.OAuth2User,
 		"isNewRecord", e.IsNewRecord)
 
+	if e.IsNewRecord {
+		studentRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it`)
+		profRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z0-9]+@itispaleocapa\.it`)
+
+		id := security.RandomString(3)
+		for {
+			_, err := e.App.FindRecordById(e.Collection.Id, id)
+			if err == sql.ErrNoRows {
+				break
+			}
+			id = security.RandomString(3)
+		}
+		e.Record = core.NewRecord(e.Collection)
+		e.Record.Id = id
+		e.Record.SetEmail(e.OAuth2User.Email)
+		e.Record.SetVerified(true)
+		e.Record.SetPassword(security.RandomString(16))
+		e.Record.Set("surname", e.OAuth2User.RawUser["family_name"])
+		e.Record.Set("name", e.OAuth2User.RawUser["given_name"])
+
+		if studentRegex.MatchString(e.OAuth2User.Email) {
+			e.Record.Set("class", "0zz")
+			e.Record.Set("roles", "studente")
+			l.Info("creating new record for student", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
+		} else if profRegex.MatchString(e.OAuth2User.Email) {
+			e.Record.Set("class", "prof")
+			e.Record.Set("roles", "docente")
+
+			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
+		}
+	}
 	return e.Next()
 }
 
