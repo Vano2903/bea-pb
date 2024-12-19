@@ -116,6 +116,7 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		// e.Record.Set("surname", e.OAuth2User.RawUser["family_name"])
 		// e.Record.Set("name", e.OAuth2User.RawUser["given_name"])
 		// e.CreateData["id"] = id
+		e.CreateData = make(map[string]any)
 		e.CreateData["email"] = e.OAuth2User.Email
 		e.CreateData["verified"] = true
 		e.CreateData["password"] = security.RandomString(16)
