@@ -103,7 +103,7 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 
 		var id string
 		for {
-			id := strings.ToUpper(security.RandomString(15))
+			id := strings.ToLower(security.RandomString(15))
 			_, err := e.App.FindRecordById(e.Collection.Id, id)
 			if err == sql.ErrNoRows {
 				break
