@@ -125,6 +125,7 @@ func main() {
 		}
 		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
 			Name:         NamePaleoGoogle,
+			DisplayName:  NamePaleoGoogle,
 			ClientId:     g.ClientId,
 			ClientSecret: g.ClientSecret,
 			AuthURL:      g.AuthURL,
