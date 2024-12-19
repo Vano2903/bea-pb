@@ -9,6 +9,7 @@ import (
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/auth"
 	"github.com/pocketbase/pocketbase/tools/security"
 	"github.com/pocketbase/pocketbase/tools/types"
 )
@@ -96,6 +97,26 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 }
 func main() {
 	app := pocketbase.New()
+
+	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
+		// get users collection
+		collection, err := e.App.FindCollectionByNameOrId("users")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// get oauth2
+		// paleoGoogle := NewPaleoGoogleProvider()
+		auth.Providers[NamePaleoGoogle] = func() auth.Provider {
+			return NewPaleoGoogleProvider()
+		}
+
+		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{Name: NamePaleoGoogle})
+		return nil
+	})
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		// return paleoidOauthHandler(app, e)
