@@ -116,7 +116,8 @@ func main() {
 
 		g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
 		if !ex {
-			log.Fatal("no google")
+			e.App.Logger().Error("set google and then restart")
+			return nil
 		}
 		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
 			Name:         NamePaleoGoogle,
@@ -127,7 +128,7 @@ func main() {
 			UserInfoURL:  g.UserInfoURL,
 			Extra:        g.Extra,
 		})
-		// collection.u
+
 		return nil
 	})
 
