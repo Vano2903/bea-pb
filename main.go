@@ -91,9 +91,6 @@ func paleoidOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth
 func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2RequestEvent) error {
 	l := app.Logger()
 
-	// get collection
-	l.Info("providers in collection", e.Collection.Name, e.Collection.OAuth2.Providers)
-
 	l.Info("googleOauthHandler",
 		"providerName", e.ProviderName,
 		"record", e.Record,
@@ -130,11 +127,11 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 
 			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
 		}
-		if err := app.Save(e.Record); err != nil {
-			return err
-		}
+		// if err := app.Save(e.Record); err != nil {
+		// 	return err
+		// }
 
-		e.OAuth2User.Id = e.Record.Id
+		// e.OAuth2User.Id = e.Record.Id
 		// return apis.RecordAuthResponse(e.RequestEvent, e.Record, core.MFAMethodOAuth2, e.OAuth2User)
 	}
 	return e.Next()
@@ -176,64 +173,64 @@ func init() {
 func main() {
 	app := pocketbase.New()
 
-	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
-		if err := e.Next(); err != nil {
-			return err
-		}
-		// get users collection
-		collection, err := e.App.FindCollectionByNameOrId("users")
-		if err != nil {
-			log.Fatal(err)
-		}
+	// app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
+	// 	if err := e.Next(); err != nil {
+	// 		return err
+	// 	}
+	// 	// get users collection
+	// 	collection, err := e.App.FindCollectionByNameOrId("users")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
 
-		// get oauth2
-		// paleoGoogle := NewPaleoGoogleProvider()
-		// auth.NameGoogle
-		// auth.Providers[auth.NameGoogle] = func() auth.Provider {
-		// 	return NewPaleoGoogleProvider()
-		// }
+	// 	// get oauth2
+	// 	// paleoGoogle := NewPaleoGoogleProvider()
+	// 	// auth.NameGoogle
+	// 	// auth.Providers[auth.NameGoogle] = func() auth.Provider {
+	// 	// 	return NewPaleoGoogleProvider()
+	// 	// }
 
-		// g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
-		// if !ex {
-		// 	e.App.Logger().Error("set google and then restart")
-		// 	return nil
-		// }
-		// collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
-		// 	Name:         NamePaleoGoogle,
-		// 	DisplayName:  NamePaleoGoogle,
-		// 	ClientId:     g.ClientId,
-		// 	ClientSecret: g.ClientSecret,
-		// 	AuthURL:      g.AuthURL,
-		// 	TokenURL:     g.TokenURL,
-		// 	UserInfoURL:  g.UserInfoURL,
-		// 	Extra:        g.Extra,
-		// })
+	// 	// g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
+	// 	// if !ex {
+	// 	// 	e.App.Logger().Error("set google and then restart")
+	// 	// 	return nil
+	// 	// }
+	// 	// collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
+	// 	// 	Name:         NamePaleoGoogle,
+	// 	// 	DisplayName:  NamePaleoGoogle,
+	// 	// 	ClientId:     g.ClientId,
+	// 	// 	ClientSecret: g.ClientSecret,
+	// 	// 	AuthURL:      g.AuthURL,
+	// 	// 	TokenURL:     g.TokenURL,
+	// 	// 	UserInfoURL:  g.UserInfoURL,
+	// 	// 	Extra:        g.Extra,
+	// 	// })
 
-		// search for google oauth
-		// for i, p := range collection.OAuth2.Providers {
-		// 	if p.Name == auth.NameGoogle {
-		// 		u, err := url.Parse(p.AuthURL)
-		// 		if err != nil {
-		// 			return err
-		// 		}
-		// 		v := u.Query()
-		// 		v.Add("hd", "itispaleocapa.it")
+	// 	// search for google oauth
+	// 	// for i, p := range collection.OAuth2.Providers {
+	// 	// 	if p.Name == auth.NameGoogle {
+	// 	// 		u, err := url.Parse(p.AuthURL)
+	// 	// 		if err != nil {
+	// 	// 			return err
+	// 	// 		}
+	// 	// 		v := u.Query()
+	// 	// 		v.Add("hd", "itispaleocapa.it")
 
-		// 		u.RawQuery = v.Encode()
-		// 		collection.OAuth2.Providers[i].AuthURL = u.String()
-		// 		e.App.Logger().Info("google oauth should be updated")
-		// 	}
-		// }
+	// 	// 		u.RawQuery = v.Encode()
+	// 	// 		collection.OAuth2.Providers[i].AuthURL = u.String()
+	// 	// 		e.App.Logger().Info("google oauth should be updated")
+	// 	// 	}
+	// 	// }
 
-		// paleo, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
-		// if !exists {
-		// 	log.Fatal("something is wrong setting paleogoogle")
-		// }
-		e.App.Logger().Info("providers of collection", collection.OAuth2.Providers)
-		// e.App.Logger().Info("paleo provider", paleo)
-		// e.App.Logger().Info("auth provider validation, paleogoogle", paleo.Validate())
-		return nil
-	})
+	// 	// paleo, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
+	// 	// if !exists {
+	// 	// 	log.Fatal("something is wrong setting paleogoogle")
+	// 	// }
+	// 	e.App.Logger().Info("providers of collection", collection.OAuth2.Providers)
+	// 	// e.App.Logger().Info("paleo provider", paleo)
+	// 	// e.App.Logger().Info("auth provider validation, paleogoogle", paleo.Validate())
+	// 	return nil
+	// })
 
 	app.OnRecordAuthWithOAuth2Request("users").BindFunc(func(e *core.RecordAuthWithOAuth2RequestEvent) error {
 		// return paleoidOauthHandler(app, e)
