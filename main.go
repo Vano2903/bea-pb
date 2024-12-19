@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"log"
-	"net/url"
 	"strconv"
 	"time"
 
@@ -100,6 +99,40 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 
 	return e.Next()
 }
+
+func wrapFactory[T auth.Provider](factory func() T) auth.ProviderFactoryFunc {
+	return func() auth.Provider {
+		return factory()
+	}
+}
+
+// Google allows authentication via Google OAuth2.
+// type Google struct {
+// 	auth.BaseProvider
+// }
+
+// // NewGoogleProvider creates new Google provider instance with some defaults.
+// func NewGoogleProvider() *Google {
+
+// 	return &Google{auth.BaseProvider{
+// 		ctx:         context.Background(),
+// 		displayName: "Google",
+// 		pkce:        true,
+// 		scopes: []string{
+// 			"https://www.googleapis.com/auth/userinfo.profile",
+// 			"https://www.googleapis.com/auth/userinfo.email",
+// 		},
+// 		authURL:     "https://accounts.google.com/o/oauth2/auth",
+// 		tokenURL:    "https://accounts.google.com/o/oauth2/token",
+// 		userInfoURL: "https://www.googleapis.com/oauth2/v1/userinfo",
+// 	}}
+// }
+
+func init() {
+	auth.Providers[auth.NameGoogle] = wrapFactory(NewPaleoGoogleProvider)
+
+}
+
 func main() {
 	app := pocketbase.New()
 
@@ -115,9 +148,10 @@ func main() {
 
 		// get oauth2
 		// paleoGoogle := NewPaleoGoogleProvider()
-		auth.Providers[NamePaleoGoogle] = func() auth.Provider {
-			return NewPaleoGoogleProvider()
-		}
+		// auth.NameGoogle
+		// auth.Providers[auth.NameGoogle] = func() auth.Provider {
+		// 	return NewPaleoGoogleProvider()
+		// }
 
 		// g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
 		// if !ex {
@@ -136,20 +170,20 @@ func main() {
 		// })
 
 		// search for google oauth
-		for i, p := range collection.OAuth2.Providers {
-			if p.Name == auth.NameGoogle {
-				u, err := url.Parse(p.AuthURL)
-				if err != nil {
-					return err
-				}
-				v := u.Query()
-				v.Add("hd", "itispaleocapa.it")
+		// for i, p := range collection.OAuth2.Providers {
+		// 	if p.Name == auth.NameGoogle {
+		// 		u, err := url.Parse(p.AuthURL)
+		// 		if err != nil {
+		// 			return err
+		// 		}
+		// 		v := u.Query()
+		// 		v.Add("hd", "itispaleocapa.it")
 
-				u.RawQuery = v.Encode()
-				collection.OAuth2.Providers[i].AuthURL = u.String()
-				e.App.Logger().Info("google oauth should be updated")
-			}
-		}
+		// 		u.RawQuery = v.Encode()
+		// 		collection.OAuth2.Providers[i].AuthURL = u.String()
+		// 		e.App.Logger().Info("google oauth should be updated")
+		// 	}
+		// }
 
 		// paleo, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
 		// if !exists {
