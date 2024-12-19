@@ -114,7 +114,20 @@ func main() {
 			return NewPaleoGoogleProvider()
 		}
 
-		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{Name: NamePaleoGoogle})
+		g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
+		if !ex {
+			log.Fatal("no google")
+		}
+		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
+			Name:         NamePaleoGoogle,
+			ClientId:     g.ClientId,
+			ClientSecret: g.ClientSecret,
+			AuthURL:      g.AuthURL,
+			TokenURL:     g.TokenURL,
+			UserInfoURL:  g.UserInfoURL,
+			Extra:        g.Extra,
+		})
+		// collection.u
 		return nil
 	})
 
