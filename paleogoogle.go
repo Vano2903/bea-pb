@@ -7,12 +7,10 @@ import (
 // PaleoGoogle is the unique name of the Google provider.
 const NamePaleoGoogle string = "paleogoogle"
 
-// Google allows authentication via Google OAuth2.
 type PaleoGoogle struct {
 	auth.Google
 }
 
-// NewPaleoGoogleProvider creates new PaleoGoogle provider instance with some defaults.
 func NewPaleoGoogleProvider() *PaleoGoogle {
 
 	p := &PaleoGoogle{

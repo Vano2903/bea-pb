@@ -95,7 +95,8 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 	l.Info("googleOauthHandler",
 		"providerName", e.ProviderName,
 		"record", e.Record,
-		"OAuth2User", e.OAuth2User)
+		"OAuth2User", e.OAuth2User,
+		"isNewRecord", e.IsNewRecord)
 
 	return e.Next()
 }
