@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
@@ -100,14 +101,14 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		studentRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it`)
 		profRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z0-9]+@itispaleocapa\.it`)
 
-		// var id string
-		// for {
-		// 	id := strings.ToUpper(security.RandomString(3))
-		// 	_, err := e.App.FindRecordById(e.Collection.Id, id)
-		// 	if err == sql.ErrNoRows {
-		// 		break
-		// 	}
-		// }
+		var id string
+		for {
+			id := strings.ToUpper(security.RandomString(3))
+			_, err := e.App.FindRecordById(e.Collection.Id, id)
+			if err == sql.ErrNoRows {
+				break
+			}
+		}
 		// e.Record = core.NewRecord(e.Collection)
 		// e.Record.Id = id
 		// e.Record.SetEmail(e.OAuth2User.Email)
@@ -117,9 +118,12 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		// e.Record.Set("name", e.OAuth2User.RawUser["given_name"])
 		// e.CreateData["id"] = id
 		e.CreateData = make(map[string]any)
+		e.CreateData["id"] = id
 		e.CreateData["email"] = e.OAuth2User.Email
 		e.CreateData["verified"] = true
-		e.CreateData["password"] = security.RandomString(16)
+		psw := security.RandomString(16)
+		e.CreateData["password"] = psw
+		e.CreateData["passwordConfirm"] = psw
 		e.CreateData["surname"] = e.OAuth2User.RawUser["family_name"]
 		e.CreateData["name"] = e.OAuth2User.RawUser["given_name"]
 
