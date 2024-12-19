@@ -129,6 +129,12 @@ func main() {
 			Extra:        g.Extra,
 		})
 
+		providers, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
+		if !exists {
+			log.Fatal("something is wrong setting paleogoogle")
+		}
+		e.App.Logger().Info("providers of collection", collection.OAuth2.Providers)
+		e.App.Logger().Info("paleo provider", providers)
 		return nil
 	})
 
