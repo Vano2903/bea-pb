@@ -5,7 +5,6 @@ import (
 	"log"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
@@ -101,36 +100,44 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		studentRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it`)
 		profRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z0-9]+@itispaleocapa\.it`)
 
-		var id string
-		for {
-			id := strings.ToUpper(security.RandomString(3))
-			_, err := e.App.FindRecordById(e.Collection.Id, id)
-			if err == sql.ErrNoRows {
-				break
-			}
-		}
-		e.Record = core.NewRecord(e.Collection)
-		e.Record.Id = id
-		e.Record.SetEmail(e.OAuth2User.Email)
-		e.Record.SetVerified(true)
-		e.Record.SetPassword(security.RandomString(16))
-		e.Record.Set("surname", e.OAuth2User.RawUser["family_name"])
-		e.Record.Set("name", e.OAuth2User.RawUser["given_name"])
+		// var id string
+		// for {
+		// 	id := strings.ToUpper(security.RandomString(3))
+		// 	_, err := e.App.FindRecordById(e.Collection.Id, id)
+		// 	if err == sql.ErrNoRows {
+		// 		break
+		// 	}
+		// }
+		// e.Record = core.NewRecord(e.Collection)
+		// e.Record.Id = id
+		// e.Record.SetEmail(e.OAuth2User.Email)
+		// e.Record.SetVerified(true)
+		// e.Record.SetPassword(security.RandomString(16))
+		// e.Record.Set("surname", e.OAuth2User.RawUser["family_name"])
+		// e.Record.Set("name", e.OAuth2User.RawUser["given_name"])
+		// e.CreateData["id"] = id
+		e.CreateData["email"] = e.OAuth2User.Email
+		e.CreateData["verified"] = true
+		e.CreateData["password"] = security.RandomString(16)
+		e.CreateData["surname"] = e.OAuth2User.RawUser["family_name"]
+		e.CreateData["name"] = e.OAuth2User.RawUser["given_name"]
 
 		if studentRegex.MatchString(e.OAuth2User.Email) {
-			e.Record.Set("class", "0zz")
-			e.Record.Set("roles", "studente")
+			// e.Record.Set("class", "0zz")
+			// e.Record.Set("roles", "studente")
+			e.CreateData["class"] = "0zz"
+			e.CreateData["roles"] = "studente"
 			l.Info("creating new record for student", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
 		} else if profRegex.MatchString(e.OAuth2User.Email) {
-			e.Record.Set("class", "prof")
-			e.Record.Set("roles", "docente")
-
+			// e.Record.Set("class", "prof")
+			// e.Record.Set("roles", "docente")
+			e.CreateData["class"] = "prof"
+			e.CreateData["roles"] = "docente"
 			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
 		}
 		// if err := app.Save(e.Record); err != nil {
 		// 	return err
 		// }
-
 		// e.OAuth2User.Id = e.Record.Id
 		// return apis.RecordAuthResponse(e.RequestEvent, e.Record, core.MFAMethodOAuth2, e.OAuth2User)
 	}
