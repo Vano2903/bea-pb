@@ -91,11 +91,11 @@ func paleoidOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth
 func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2RequestEvent) error {
 	l := app.Logger()
 
-	l.Info("googleOauthHandler",
-		"providerName", e.ProviderName,
-		"record", e.Record,
-		"OAuth2User", e.OAuth2User,
-		"isNewRecord", e.IsNewRecord)
+	// l.Info("googleOauthHandler",
+	// 	"providerName", e.ProviderName,
+	// 	"record", e.Record,
+	// 	"OAuth2User", e.OAuth2User,
+	// 	"isNewRecord", e.IsNewRecord)
 
 	if e.IsNewRecord {
 		studentRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it`)
@@ -132,13 +132,13 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 			// e.Record.Set("roles", "studente")
 			e.CreateData["class"] = "0zz"
 			e.CreateData["roles"] = "studente"
-			l.Info("creating new record for student", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
+			l.Info("creating new record for student", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.CreateData)
 		} else if profRegex.MatchString(e.OAuth2User.Email) {
 			// e.Record.Set("class", "prof")
 			// e.Record.Set("roles", "docente")
 			e.CreateData["class"] = "prof"
 			e.CreateData["roles"] = "docente"
-			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
+			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.CreateData)
 		}
 		// if err := app.Save(e.Record); err != nil {
 		// 	return err
