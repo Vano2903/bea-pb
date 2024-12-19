@@ -129,6 +129,12 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 
 			l.Info("creating new record for prof", "email", e.OAuth2User.Email, "fullname", e.OAuth2User.Name, "record", e.Record)
 		}
+		if err := app.Save(e.Record); err != nil {
+			return err
+		}
+
+		e.OAuth2User.Id = e.Record.Id
+		// return apis.RecordAuthResponse(e.RequestEvent, e.Record, core.MFAMethodOAuth2, e.OAuth2User)
 	}
 	return e.Next()
 }
