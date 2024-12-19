@@ -120,7 +120,7 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		e.CreateData = make(map[string]any)
 		e.CreateData["id"] = id
 		e.CreateData["email"] = e.OAuth2User.Email
-		e.CreateData["verified"] = true
+		// e.CreateData["verified"] = true
 		psw := security.RandomString(16)
 		e.CreateData["password"] = psw
 		e.CreateData["passwordConfirm"] = psw
