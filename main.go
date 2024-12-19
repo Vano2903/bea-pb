@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -118,29 +119,45 @@ func main() {
 			return NewPaleoGoogleProvider()
 		}
 
-		g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
-		if !ex {
-			e.App.Logger().Error("set google and then restart")
-			return nil
-		}
-		collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
-			Name:         NamePaleoGoogle,
-			DisplayName:  NamePaleoGoogle,
-			ClientId:     g.ClientId,
-			ClientSecret: g.ClientSecret,
-			AuthURL:      g.AuthURL,
-			TokenURL:     g.TokenURL,
-			UserInfoURL:  g.UserInfoURL,
-			Extra:        g.Extra,
-		})
+		// g, ex := collection.OAuth2.GetProviderConfig(auth.NameGoogle)
+		// if !ex {
+		// 	e.App.Logger().Error("set google and then restart")
+		// 	return nil
+		// }
+		// collection.OAuth2.Providers = append(collection.OAuth2.Providers, core.OAuth2ProviderConfig{
+		// 	Name:         NamePaleoGoogle,
+		// 	DisplayName:  NamePaleoGoogle,
+		// 	ClientId:     g.ClientId,
+		// 	ClientSecret: g.ClientSecret,
+		// 	AuthURL:      g.AuthURL,
+		// 	TokenURL:     g.TokenURL,
+		// 	UserInfoURL:  g.UserInfoURL,
+		// 	Extra:        g.Extra,
+		// })
 
-		paleo, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
-		if !exists {
-			log.Fatal("something is wrong setting paleogoogle")
+		// search for google oauth
+		for i, p := range collection.OAuth2.Providers {
+			if p.Name == auth.NameGoogle {
+				u, err := url.Parse(p.AuthURL)
+				if err != nil {
+					return err
+				}
+				v := u.Query()
+				v.Add("hd", "itispaleocapa.it")
+
+				u.RawQuery = v.Encode()
+				collection.OAuth2.Providers[i].AuthURL = u.String()
+				e.App.Logger().Info("google oauth should be updated")
+			}
 		}
+
+		// paleo, exists := collection.OAuth2.GetProviderConfig(NamePaleoGoogle)
+		// if !exists {
+		// 	log.Fatal("something is wrong setting paleogoogle")
+		// }
 		e.App.Logger().Info("providers of collection", collection.OAuth2.Providers)
-		e.App.Logger().Info("paleo provider", paleo)
-		e.App.Logger().Info("auth provider validation, paleogoogle", paleo.Validate())
+		// e.App.Logger().Info("paleo provider", paleo)
+		// e.App.Logger().Info("auth provider validation, paleogoogle", paleo.Validate())
 		return nil
 	})
 

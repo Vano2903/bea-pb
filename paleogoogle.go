@@ -43,7 +43,7 @@ func NewPaleoGoogleProvider() *PaleoGoogle {
 
 func (p *PaleoGoogle) FetchRawUserInfo(token *oauth2.Token) ([]byte, error) {
 
-	u, err := url.Parse(p.UserInfoURL())
+	u, err := url.Parse(p.AuthURL())
 	if err != nil {
 		return nil, err
 	}
