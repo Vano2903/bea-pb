@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
@@ -103,13 +104,13 @@ func googleOauthHandler(app *pocketbase.PocketBase, e *core.RecordAuthWithOAuth2
 		studentRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z]+\.studente[0-9]*@itispaleocapa\.it`)
 		profRegex := regexp.MustCompile(`^[a-zA-z]+\.[a-zA-z0-9]+@itispaleocapa\.it`)
 
-		id := security.RandomString(3)
+		var id string
 		for {
+			id := strings.ToUpper(security.RandomString(3))
 			_, err := e.App.FindRecordById(e.Collection.Id, id)
 			if err == sql.ErrNoRows {
 				break
 			}
-			id = security.RandomString(3)
 		}
 		e.Record = core.NewRecord(e.Collection)
 		e.Record.Id = id
